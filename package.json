@@ -13,12 +13,14 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "lint-staged": {
-    "*.js": ["eslint --cache --fix", "prettier --write"],
+    "*.js": [
+      "eslint --cache --fix",
+      "prettier --write"
+    ],
     "*.{js, mjs}": "prettier --write",
     "*.--fix": "prettier --write . && git add -A ."
   },
-  "keywords": [
-  ],
+  "keywords": [],
   "repository": {
     "type": "git",
     "url": ""
@@ -26,24 +28,27 @@
   "author": "Godson",
   "license": "MIT",
   "dependencies": {
-    "client-ip": "^1.0.0",
     "aws-sdk": "^2.1177.0",
+    "bcryptjs": "^2.4.3",
     "bull": "^4.8.4",
+    "client-ip": "^1.0.0",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "helmet": "^4.6.0",
+    "image-js": "^0.34.1",
     "ip-info-finder": "^1.2.3",
+    "joi": "^17.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.4.5",
+    "multer": "^1.4.5-lts.1",
     "node-iplocate": "^1.0.3",
     "public-ip": "^6.0.1",
+    "rand-token": "^1.0.1",
     "request-ip": "^3.3.0",
     "satelize-lts": "^1.0.1",
-    "image-js": "^0.34.1",
-    "multer": "^1.4.5-lts.1",
-    "rand-token": "^1.0.1",
     "socket.io": "^4.2.0",
     "typedi": "^0.10.0"
-
   },
   "devDependencies": {
     "eslint": "^7.32.0",
