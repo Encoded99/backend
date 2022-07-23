@@ -5,13 +5,15 @@ import Exception from '../utils/exception.js'
 import { registerValidation, LoginValidation } from '../validations/register.js'
 import Msg from '../utils/resMsg.js'
 
-export async function SignUp(req, res, next) {
+export async function signUp(req, res, next) {
   try {
     const data = req.body
     const { error } = registerValidation(data)
     if (error) throw new Exception(error.details[0].message, 400)
-    const isEmailExist = await User.findOne({ email: data.email })
-    if (isEmailExist) throw new Exception('Email already exists', 400)
+    const isEmailExist = await User.findOne({
+      $or: [{ email: data.email }, { telephone: data.telephone }],
+    })
+    if (isEmailExist) throw new Exception('user exist', 400)
     data.password = await bcrypt.hash(data.password, 10)
     const account = await User.create(data)
     Msg(res, { data: account }, 'registered', 201)
@@ -27,24 +29,69 @@ export async function Login(req, res, next) {
     const { email, password } = req.body
     const user = await User.findOne({ email })
 
-    if (!user) return res.status(400).json({ error: 'Email is wrong' })
+    if (!user) throw new Exception('Invalid email/password ', 401)
 
     const validPassword = await bcrypt.compare(password, user.password)
-    if (!validPassword)
-      return res.status(400).json({ error: 'Incorrect Password ' })
+    if (!validPassword) throw new Exception('Invalid email/password ', 401)
+    user.accessToken = jwt.sign(
+      { _id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '120mins',
+      }
+    )
 
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '120mins',
-    })
-
-    user.token = token
-    const account = await User.create(user)
-    res.send({
-      status: 200,
-      message: ' Login sucessfull ',
-      data: account,
-    })
+    return Msg(res, { data: user }, 'login successful', 200)
   } catch (err) {
-    next(err)
+    next(new Exception(err.message, err.status))
+  }
+}
+
+export async function findOne(req, res, next) {
+  try {
+    const { id } = req.params
+    const user = await User.findOne({ _id: id })
+    if (!user) throw new Exception('user  not found ', 400)
+
+    Msg(res, { data: user })
+  } catch (err) {
+    next(new Exception(err.message, err.status))
+  }
+}
+export async function findAll(req, res, next) {
+  try {
+    const user = await User.find()
+
+    Msg(res, { data: user })
+  } catch (err) {
+    next(new Exception(err.message, err.status))
+  }
+}
+export async function updateUser(req, res, next) {
+  try {
+    const { id } = req.params
+    const user = await User.findOne({ _id: id })
+    if (!user) throw new Exception('user  not found ', 400)
+
+    const data = await User.findByIdAndUpdate(user._id, req.body, {
+      new: true,
+    })
+
+    Msg(res, { data })
+  } catch (err) {
+    next(new Exception(err.message, err.status))
+  }
+}
+export async function searchUser(req, res, next) {
+  try {
+    const { country } = req.query
+    console.log(req.query, 'query')
+
+    const user = await User.findOne({ 'address.country': country })
+    if (!user) throw new Exception('user  not found ', 400)
+
+    Msg(res, { user })
+  } catch (err) {
+    next(new Exception(err.message, err.status))
   }
 }
