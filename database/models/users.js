@@ -28,6 +28,7 @@ const Schema = new mongoose.Schema({
 
   telephone: {
     type: String,
+    unique: true,
   },
 
   isVerified: {

@@ -1,9 +1,8 @@
 import mongoose from 'mongoose'
 
 const initDb = () => {
-  const PORT = process.env.PORT || 8000
   try {
-    mongoose.connect(process.env.DB_REMOTE, {
+    mongoose.connect(process.env.DB_LOCAL, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     })

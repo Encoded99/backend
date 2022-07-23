@@ -4,7 +4,6 @@ import cors from 'cors'
 import helmet from 'helmet'
 import Router from './routes/router.js'
 import initDb from './database/config.js'
-import RequestIp from './middleware/request-ip.js'
 
 const app = express()
 
@@ -19,7 +18,6 @@ app.use(
   })
 )
 app.use(helmet())
-//  app.use(RequestIp)
 app.use(Router)
 app.use((err, req, res, next) => {
   res.status(err.status || 409).json({
@@ -32,5 +30,5 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 8000
 app.listen(PORT, () => {
-  console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`)
+  console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`)
 })
