@@ -35,7 +35,7 @@ export async function Login(req, res, next) {
     if (!validPassword) throw new Exception('Invalid email/password ', 401)
     user.accessToken = jwt.sign(
       { _id: user._id, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
+      process.env.JWT,
       {
         expiresIn: '120mins',
       }
