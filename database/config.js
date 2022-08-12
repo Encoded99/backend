@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 
 const initDb = () => {
   try {
-    mongoose.connect(process.env.DB_CONN, {
+    mongoose.connect(process.env.DB_REMOTE, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     })
