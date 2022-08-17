@@ -8,6 +8,7 @@ import Msg from '../utils/resMsg.js'
 export async function signUp(req, res, next) {
   try {
     const data = req.body
+    req.req = 'djdjdjdjd'
     const { error } = registerValidation(data)
     if (error) throw new Exception(error.details[0].message, 400)
     const isEmailExist = await User.findOne({

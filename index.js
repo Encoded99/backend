@@ -7,7 +7,7 @@ import initDb from './database/config.js'
 
 const app = express()
 
-config()
+config({ path: `.env.${process.env.NODE_ENV}` })
 initDb()
 
 app.use(express.json())
