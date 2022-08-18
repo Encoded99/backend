@@ -17,6 +17,7 @@ const Schema = new mongoose.Schema({
     type: String,
     unique: true,
     lower: true,
+    required: true,
   },
   image: {
     type: String,

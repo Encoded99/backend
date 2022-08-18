@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+// import bcrypt from 'bcryptjs'
 
 const Schema = new mongoose.Schema({
   firstName: {
@@ -18,6 +19,7 @@ const Schema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Password is required'],
+    // select: false,
   },
   address: {
     address: { type: String },
@@ -41,6 +43,7 @@ const Schema = new mongoose.Schema({
   role: {
     type: String,
     enum: ['client', 'provider', 'admin', 'super admin'],
+    default: 'client',
     lower: true,
   },
   createdAt: {
@@ -48,7 +51,14 @@ const Schema = new mongoose.Schema({
     default: new Date(),
   },
 })
-
+/*
+Schema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next()
+  // Hash password with a cost of 10
+  this.password = await bcrypt.hash(this.password, 10)
+  next()
+})
+*/
 const User = mongoose.model('User', Schema)
 
 export default User
