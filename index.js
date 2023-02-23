@@ -8,7 +8,6 @@ import initDb from './database/config.js'
 const app = express()
 
 config({ path: `.env.${process.env.NODE_ENV}` })
-initDb()
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -29,6 +28,4 @@ app.use((err, req, res, next) => {
 })
 
 const PORT = process.env.PORT || 8000
-app.listen(PORT, () => {
-  console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`)
-})
+initDb(app, PORT)
