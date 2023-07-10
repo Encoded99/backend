@@ -6,10 +6,10 @@ const validateProduct = (data) => {
     description: Joi.string().required(),
     category: Joi.string().required(),
     image: Joi.string().required(),
+    sku: Joi.number().required(),
     amount: Joi.number().required(),
     discount: Joi.number().optional(),
     tags: Joi.array().required(),
-    provider: Joi.string().required(),
   })
   return Schema.validate(data)
 }

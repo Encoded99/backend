@@ -102,7 +102,7 @@ export async function Login(req, res, next) {
     if (!validPassword) throw new Exception('Invalid email/password ', 401)
     user.accessToken = jwt.sign(
       { _id: user._id, email: user.email, role: user.role },
-      process.env.JWT,
+      process.env.JWT_SECRET,
       {
         expiresIn: '120mins',
       }
@@ -162,7 +162,6 @@ export async function deleteUser(req, res, next) {
 export async function searchUser(req, res, next) {
   try {
     const { country } = req.query
-    console.log(req.query, 'query')
 
     const user = await User.findOne({ 'address.country': country })
     if (!user) throw new Exception('user  not found ', 400)

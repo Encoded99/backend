@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-// import bcrypt from 'bcryptjs'
+import bcrypt from 'bcryptjs'
 
 const Schema = new mongoose.Schema({
   firstName: {
@@ -22,7 +22,8 @@ const Schema = new mongoose.Schema({
     // select: false,
   },
   address: {
-    address: { type: String },
+    houseNumber: { type: String },
+    street: { type: String },
     city: { type: String },
     state: { type: String },
     country: { type: String },
@@ -31,6 +32,7 @@ const Schema = new mongoose.Schema({
   telephone: {
     type: String,
     unique: true,
+    required: [true, 'telephone is required'],
   },
 
   isVerified: {
@@ -42,8 +44,8 @@ const Schema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['client', 'provider', 'admin', 'super admin'],
-    default: 'client',
+    enum: ['user', 'admin', 'super admin'],
+    default: 'user',
     lower: true,
   },
   createdAt: {
@@ -51,14 +53,14 @@ const Schema = new mongoose.Schema({
     default: new Date(),
   },
 })
-/*
-Schema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next()
-  // Hash password with a cost of 10
-  this.password = await bcrypt.hash(this.password, 10)
-  next()
-})
-*/
-const User = mongoose.model('User', Schema)
+
+// Schema.pre('save', async (next) => {
+//   if (!this.isModified('password')) return next()
+//   // Hash password with a cost of 10
+//   this.password = await bcrypt.hash(this.password, 10)
+//   return next()
+// })
+
+const User = mongoose.model('users', Schema)
 
 export default User

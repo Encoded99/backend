@@ -10,7 +10,7 @@ const router = Router()
 // router.use(RequestIp)
 
 router.get('/', HomePage)
-router.use('/user', userRouter)
-router.use('/product', pRouter)
+router.use('/users', userRouter)
+router.use('/products', pRouter)
 
 export default router

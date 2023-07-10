@@ -31,24 +31,33 @@ const Schema = new mongoose.Schema({
     type: Number,
   },
 
+  sku: {
+    type: Number,
+  },
+
   status: {
     type: String,
     enum: ['pending', 'verified', 'rejected'],
     default: 'pending',
   },
+
+  available: {
+    type: Boolean,
+    default: true,
+  },
   tags: [String],
-  comments: [
+  reviews: [
     {
       user: {
         type: mongoose.Types.ObjectId,
-        ref: 'User',
+        ref: 'users',
       },
       comment: String,
     },
   ],
-  provider: {
+  seller: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'users',
   },
   createdAt: {
     type: Date,
@@ -56,6 +65,6 @@ const Schema = new mongoose.Schema({
   },
 })
 
-const Product = mongoose.model('Product', Schema)
+const Product = mongoose.model('products', Schema)
 
 export default Product

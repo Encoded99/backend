@@ -5,9 +5,10 @@ import helmet from 'helmet'
 import Router from './routes/router.js'
 import initDb from './database/config.js'
 
+config()
 const app = express()
 
-config({ path: `.env.${process.env.NODE_ENV}` })
+// config({ path: `.env.${process.env.NODE_ENV}` })
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
