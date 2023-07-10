@@ -19,10 +19,16 @@ const Schema = new mongoose.Schema({
     lower: true,
     required: true,
   },
-  image: {
-    type: String,
-    required: [true, 'image is required'],
-  },
+  image: [
+    {
+      url: {
+        type: String,
+      },
+      type: {
+        type: String,
+      },
+    },
+  ],
 
   discount: {
     type: Number,
@@ -48,11 +54,8 @@ const Schema = new mongoose.Schema({
   tags: [String],
   reviews: [
     {
-      user: {
-        type: mongoose.Types.ObjectId,
-        ref: 'users',
-      },
-      comment: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'reviews',
     },
   ],
   seller: {

@@ -2,7 +2,7 @@ import express from 'express'
 import { config } from 'dotenv'
 import cors from 'cors'
 import helmet from 'helmet'
-import Router from './routes/router.js'
+import Router from './routes/index.js'
 import initDb from './database/config.js'
 
 config()
@@ -20,13 +20,13 @@ app.use(
 app.use(helmet())
 app.use(Router)
 app.use((err, req, res, next) => {
-  res.status(err.status || 409).json({
+  res.status(err.status || 500).json({
     status: 'error',
-    statusCode: err.status || 409,
+    statusCode: err.status,
     message: err.message,
     data: '',
   })
 })
 
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT || 8080
 initDb(app, PORT)

@@ -63,7 +63,7 @@ export async function signUpMagicLink(req, res, next) {
     const token = generateString()
 
     const body = {
-      from: '"pma 👻" <signup@pma.com>',
+      from: '"pma" <signup@pma.com>',
       email: data.email,
       subject: 'Email Verification',
       text: `<p>Click on the link below to verify your email </p>
@@ -104,7 +104,7 @@ export async function Login(req, res, next) {
       { _id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       {
-        expiresIn: '120mins',
+        expiresIn: '24hrs',
       }
     )
 
