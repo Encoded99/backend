@@ -11,7 +11,7 @@ const RequestIp = async (req, res, next) => {
     req.ip_info = results
     next()
   } catch (err) {
-    next(new Exception(err.message, (err.status ??= 400)))
+    next(new Exception(err.message, 400))
   }
 }
 
