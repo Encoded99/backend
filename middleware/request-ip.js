@@ -1,6 +1,5 @@
 import * as publicIp from 'public-ip'
 import iplocate from 'node-iplocate'
-import * as ipInfo from 'ip-info-finder'
 import Exception from '../utils/exception.js'
 
 const RequestIp = async (req, res, next) => {

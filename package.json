@@ -38,7 +38,6 @@
     "express": "^4.17.1",
     "helmet": "^4.6.0",
     "image-js": "^0.34.1",
-    "ip-info-finder": "^1.2.3",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.4.5",
