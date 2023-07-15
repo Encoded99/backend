@@ -23,6 +23,13 @@ export async function signUpEmailPassword(req, res, next) {
     if (isEmailExist) throw new Exception('user exist', 400)
     data.password = await bcrypt.hash(data.password, 10)
     const account = await User.create(data)
+    account.accessToken = jwt.sign(
+      { _id: account._id, email: account.email, role: account.role },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '24hrs',
+      }
+    )
     Msg(res, { data: account }, 'registered', 201)
   } catch (error) {
     next(new Exception(error.message, error.status))
@@ -46,6 +53,13 @@ export async function completeSignup(req, res, next) {
     if (isEmailExist) throw new Exception('user exist', 400)
     data.password = await bcrypt.hash(data.password, 10)
     const account = await User.create(data)
+    account.accessToken = jwt.sign(
+      { _id: account._id, email: account.email, role: account.role },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '24hrs',
+      }
+    )
     Msg(res, { data: account }, 'registered', 201)
   } catch (error) {
     next(new Exception(error.message, error.status))
@@ -58,7 +72,6 @@ export async function signUpMagicLink(req, res, next) {
     const { error } = EmailValidation(data)
     if (error) throw new Exception(error.details[0].message, 400)
     const isEmailExist = await User.findOne({ email: data.email })
-    console.log(isEmailExist)
     if (isEmailExist) throw new Exception('user exist', 400)
     const token = generateString()
 
