@@ -7,7 +7,7 @@ import Product from '../database/models/products.js'
 import Review from '../database/models/reviews.js'
 import generateInvoice from '../utils/pdf-generator.js'
 
-const userAttributes = 'email telephone address'
+const userAttributes = 'firstName lastName email telephone address'
 
 const sellerInclude = {
   path: 'seller',
@@ -24,7 +24,7 @@ export async function addProduct(req, res, next) {
     })
     data.seller = req.user._id
     const product = await Product.create(data)
-    Msg(res, { data: product }, 'product added to marketplace', 201)
+    Msg(res, { product }, 'product added to marketplace', 201)
   } catch (error) {
     next(new Exception(error.message, error.status))
   }
@@ -50,7 +50,7 @@ export async function findProduct(req, res, next) {
       .exec()
     if (!product) throw new Exception('product not found ', 400)
 
-    Msg(res, { data: product })
+    Msg(res, { product })
   } catch (err) {
     next(new Exception(err.message, err.status))
   }
@@ -78,7 +78,7 @@ export async function fetchProducts(req, res, next) {
       ])
       .exec()
 
-    Msg(res, { data: products })
+    Msg(res, { products })
   } catch (err) {
     next(new Exception(err.message, err.status))
   }
@@ -101,7 +101,7 @@ export async function fetchVerifiedProducts(req, res, next) {
       ])
       .exec()
 
-    Msg(res, { data: products })
+    Msg(res, { products })
   } catch (err) {
     next(new Exception(err.message, err.status))
   }
@@ -116,7 +116,7 @@ export async function updateProduct(req, res, next) {
       new: true,
     })
 
-    Msg(res, { data })
+    Msg(res, { product: data })
   } catch (err) {
     next(new Exception(err.message, err.status))
   }
@@ -134,7 +134,7 @@ export async function updateProductStatus(req, res, next) {
       new: true,
     })
 
-    Msg(res, { data })
+    Msg(res, { product: data })
   } catch (err) {
     next(new Exception(err.message, err.status))
   }
@@ -177,7 +177,7 @@ export async function addProductReview(req, res, next) {
     const data = await Product.findByIdAndUpdate(product._id, product, {
       new: true,
     })
-    Msg(res, { data }, 'review added to product ', 201)
+    Msg(res, { review: req.body.review }, 'review added to product ', 201)
   } catch (error) {
     next(new Exception(error.message, error.status))
   }
@@ -243,7 +243,7 @@ export async function fetchSeller(req, res, next) {
       _id: { $in: uniqueSellers },
     }).select(userAttributes)
 
-    Msg(res, { data: sellers })
+    Msg(res, { sellers })
   } catch (err) {
     next(new Exception(err.message, err.status))
   }

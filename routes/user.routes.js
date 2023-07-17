@@ -4,11 +4,10 @@ import {
   signUpMagicLink,
   completeSignup,
   Login,
-  findOne,
   updateUser,
-  searchUser,
-  deleteUser,
+  myAccout,
 } from '../controller/authentication.js'
+import isLoggedIn from '../middleware/authentication.js'
 
 const userRouter = Router()
 
@@ -16,8 +15,7 @@ userRouter.post('/', signUpEmailPassword)
 userRouter.post('/signup-link', signUpMagicLink)
 userRouter.post('/complete-signup', completeSignup)
 userRouter.post('/login', Login)
-userRouter.get('/search', searchUser)
-userRouter.patch('/:id', updateUser)
-userRouter.get('/:id', findOne)
+userRouter.get('/my-profile', isLoggedIn, myAccout)
+userRouter.patch('/update-profile', isLoggedIn, updateUser)
 
 export default userRouter

@@ -23,6 +23,7 @@ export async function signUpEmailPassword(req, res, next) {
     if (isEmailExist) throw new Exception('user exist', 400)
     data.password = await bcrypt.hash(data.password, 10)
     const account = await User.create(data)
+
     account.accessToken = jwt.sign(
       { _id: account._id, email: account.email, role: account.role },
       process.env.JWT_SECRET,
@@ -30,7 +31,8 @@ export async function signUpEmailPassword(req, res, next) {
         expiresIn: '24hrs',
       }
     )
-    Msg(res, { data: account }, 'registered', 201)
+    account.password = null
+    Msg(res, { user: account }, 'registered', 201)
   } catch (error) {
     next(new Exception(error.message, error.status))
   }
@@ -53,6 +55,7 @@ export async function completeSignup(req, res, next) {
     if (isEmailExist) throw new Exception('user exist', 400)
     data.password = await bcrypt.hash(data.password, 10)
     const account = await User.create(data)
+    delete account.password
     account.accessToken = jwt.sign(
       { _id: account._id, email: account.email, role: account.role },
       process.env.JWT_SECRET,
@@ -60,7 +63,7 @@ export async function completeSignup(req, res, next) {
         expiresIn: '24hrs',
       }
     )
-    Msg(res, { data: account }, 'registered', 201)
+    Msg(res, { user: account }, 'registered', 201)
   } catch (error) {
     next(new Exception(error.message, error.status))
   }
@@ -88,12 +91,11 @@ export async function signUpMagicLink(req, res, next) {
       response: 'verification code has been sent to your email address',
     }
     const cache = await setCache(token, { token, email: data.email }, 900)
-
     sendEmail(body)
 
     Msg(
       res,
-      { data: 'check your email for verification link' },
+      { message: 'check your email for verification link' },
       'registered',
       201
     )
@@ -110,9 +112,10 @@ export async function Login(req, res, next) {
     const user = await User.findOne({ email })
 
     if (!user) throw new Exception('Invalid email/password ', 401)
-    console.log(user)
+
     const validPassword = await bcrypt.compare(password, user.password)
     if (!validPassword) throw new Exception('Invalid email/password ', 401)
+    user.password = null
     user.accessToken = jwt.sign(
       { _id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
@@ -121,7 +124,20 @@ export async function Login(req, res, next) {
       }
     )
 
-    return Msg(res, { data: user }, 'login successful', 200)
+    return Msg(res, { user }, 'login successful', 200)
+  } catch (err) {
+    next(new Exception(err.message, err.status))
+  }
+}
+
+export async function myAccout(req, res, next) {
+  try {
+    const userId = req.user._id
+    const user = await User.findOne({ _id: userId })
+    if (!user) throw new Exception('user  not found ', 400)
+    user.password = null
+
+    Msg(res, { data: user })
   } catch (err) {
     next(new Exception(err.message, err.status))
   }
@@ -132,32 +148,37 @@ export async function findOne(req, res, next) {
     const { id } = req.params
     const user = await User.findOne({ _id: id })
     if (!user) throw new Exception('user  not found ', 400)
+    user.password = null
 
-    Msg(res, { data: user })
+    Msg(res, { user })
   } catch (err) {
     next(new Exception(err.message, err.status))
   }
 }
+
 export async function findAll(req, res, next) {
   try {
-    const user = await User.find()
+    const users = await User.find().select(
+      'firstName lastName email telephone role isVerified address'
+    )
 
-    Msg(res, { data: user })
+    Msg(res, { users })
   } catch (err) {
     next(new Exception(err.message, err.status))
   }
 }
 export async function updateUser(req, res, next) {
   try {
-    const { id } = req.params
-    const user = await User.findOne({ _id: id })
+    const userId = req.user._id
+    const user = await User.findOne({ _id: userId })
     if (!user) throw new Exception('user  not found ', 400)
 
     const data = await User.findByIdAndUpdate(user._id, req.body, {
       new: true,
     })
 
-    Msg(res, { data })
+    data.password = null
+    Msg(res, { user: data })
   } catch (err) {
     next(new Exception(err.message, err.status))
   }
@@ -174,10 +195,13 @@ export async function deleteUser(req, res, next) {
 }
 export async function searchUser(req, res, next) {
   try {
-    const { country } = req.query
+    const { email, telephone } = req.query
 
-    const user = await User.findOne({ 'address.country': country })
+    const user = await User.findOne({
+      $or: [{ email }, { telephone }],
+    })
     if (!user) throw new Exception('user  not found ', 400)
+    user.password = null
 
     Msg(res, { user })
   } catch (err) {
