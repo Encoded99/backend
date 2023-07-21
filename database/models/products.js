@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+// import MongooseDelete from 'mongoose-delete'
 
 const Schema = new mongoose.Schema({
   name: {
@@ -66,8 +67,17 @@ const Schema = new mongoose.Schema({
     type: Date,
     default: new Date(),
   },
+  deletedAt: { type: Date },
+  isDeleted: { type: Boolean, defaults: false },
+})
+Schema.pre('find', () => {
+  this.where({ isDeleted: false })
+})
+Schema.pre('findOne', () => {
+  this.where({ isDeleted: false })
 })
 
+// Schema.plugin(MongooseDelete)
 const Product = mongoose.model('products', Schema)
 
 export default Product

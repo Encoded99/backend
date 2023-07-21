@@ -36,6 +36,7 @@ export async function findProduct(req, res, next) {
     const product = await Product.findOne({
       $or: [{ _id: id }, { slug: id }],
     })
+      .lean()
       .populate([
         {
           path: 'seller',
@@ -114,7 +115,7 @@ export async function updateProduct(req, res, next) {
 
     const data = await Product.findByIdAndUpdate(product._id, req.body, {
       new: true,
-    })
+    }).lean()
 
     Msg(res, { product: data })
   } catch (err) {
@@ -135,6 +136,23 @@ export async function updateProductStatus(req, res, next) {
     })
 
     Msg(res, { product: data })
+  } catch (err) {
+    next(new Exception(err.message, err.status))
+  }
+}
+
+export async function deleteProduct(req, res, next) {
+  try {
+    const { id } = req.params
+    const product = await Product.findOneAndUpdate(
+      { _id: id },
+      {
+        isDeleted: true,
+        deletedAt: new Date(),
+      }
+    )
+
+    Msg(res, { product: 'product deleted' })
   } catch (err) {
     next(new Exception(err.message, err.status))
   }

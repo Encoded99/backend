@@ -1,5 +1,3 @@
-// import { Container, Service } from 'typedi'
-
 export default class Exception extends Error {
   constructor(message, status) {
     super()
@@ -7,6 +5,3 @@ export default class Exception extends Error {
     this.status = status
   }
 }
-
-// const exception = Container.get(Exception)
-// export default exception
