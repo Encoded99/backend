@@ -37,6 +37,7 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "helmet": "^4.6.0",
+    "html-pdf-node": "^1.0.8",
     "image-js": "^0.34.1",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",

@@ -1,4 +1,4 @@
-// const HTMLToPDF = require('convert-html-to-pdf').default
+import * as htmltopdf from 'html-pdf-node'
 
 // import HTMLToPDF from 'convert-html-to-pdf'
 
@@ -96,21 +96,18 @@ function generateHtml(options) {
     `
 }
 
-const generateInvoice = async (options) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      const html = generateHtml(options)
-      //   const htmlToPDF = new HTMLToPDF(html)
+async function generateInvoice(data) {
+  const options = { format: 'A4' }
 
-      //   const pdf = await htmlToPDF.convert({
-      //     waitForNetworkIdle: true,
-      //     browserOptions: { defaultViewport: { width: 1920, height: 1080 } },
-      //     pdfOptions: { height: 1200, width: 900, timeout: 0 },
-      //   })
-      resolve(pdf)
-    } catch (err) {
-      reject(err)
-    }
-  })
+  const html = generateHtml(data)
+  const file = { content: html }
+  const pdf = htmltopdf
+    .generatePdf(file, options)
+    .then((pd) => pd)
+    .catch((err) => {
+      throw new Error(err)
+    })
+  return pdf
+}
 
 export default generateInvoice

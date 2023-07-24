@@ -5,8 +5,6 @@ const initDb = (app, PORT) => {
     .connect(process.env.DB_CONN, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useCreateIndex: true,
-      useFindAndModify: false,
     })
     .then((conn) => {
       console.log('Connection to Database successful')
