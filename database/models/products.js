@@ -69,7 +69,7 @@ const Schema = new mongoose.Schema({
     default: new Date(),
   },
   deletedAt: { type: Date },
-  isDeleted: { type: Boolean, defaults: false },
+  isDeleted: { type: Boolean, default: false },
 })
 Schema.pre('find', function () {
   this.where({ isDeleted: false })
