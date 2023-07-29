@@ -40,6 +40,7 @@ const Schema = new mongoose.Schema({
 
   sku: {
     type: Number,
+    required: true,
   },
 
   status: {
@@ -50,7 +51,7 @@ const Schema = new mongoose.Schema({
 
   available: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   tags: [String],
   reviews: [
@@ -70,10 +71,10 @@ const Schema = new mongoose.Schema({
   deletedAt: { type: Date },
   isDeleted: { type: Boolean, defaults: false },
 })
-Schema.pre('find', () => {
+Schema.pre('find', function () {
   this.where({ isDeleted: false })
 })
-Schema.pre('findOne', () => {
+Schema.pre('findOne', function () {
   this.where({ isDeleted: false })
 })
 

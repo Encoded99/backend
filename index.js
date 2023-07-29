@@ -20,6 +20,7 @@ app.use(
 app.use(helmet())
 app.use(Router)
 app.use((err, req, res, next) => {
+  console.log(err)
   res.status(err.status || 500).json({
     status: 'error',
     statusCode: err.status,

@@ -22,6 +22,7 @@
         "no-async-promise-executor": 0,
         "no-undef": 0,
         "no-unused-vars": "off",
+        "func-names": "off",
         "import/extensions": [
             "error",
             {

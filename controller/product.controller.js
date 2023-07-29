@@ -87,7 +87,7 @@ export async function fetchProducts(req, res, next) {
 
 export async function fetchVerifiedProducts(req, res, next) {
   try {
-    const products = await Product.find({ status: 'verified' })
+    const products = await Product.find({ status: 'verified', available: true })
       .sort({ createdAt: -1 })
       .populate({
         path: 'seller',
