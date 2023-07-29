@@ -130,6 +130,7 @@ export async function updateProductStatus(req, res, next) {
     if (!product) throw new Exception('product  not found ', 400)
 
     product.status = req.body.status
+    product.status = req.body.available
 
     const data = await Product.findByIdAndUpdate(product._id, product, {
       new: true,
@@ -141,7 +142,24 @@ export async function updateProductStatus(req, res, next) {
   }
 }
 
-export async function deleteProduct(req, res, next) {
+export async function userDeleteProduct(req, res, next) {
+  try {
+    const { id } = req.params
+    const product = await Product.findOneAndUpdate(
+      { _id: id, seller: req.user._id },
+      {
+        isDeleted: true,
+        deletedAt: new Date(),
+      }
+    )
+
+    Msg(res, { product: 'product deleted' })
+  } catch (err) {
+    next(new Exception(err.message, err.status))
+  }
+}
+
+export async function adminDeleteProduct(req, res, next) {
   try {
     const { id } = req.params
     const product = await Product.findOneAndUpdate(

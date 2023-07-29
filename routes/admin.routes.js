@@ -3,6 +3,7 @@ import {
   fetchProducts,
   fetchSeller,
   updateProductStatus,
+  adminDeleteProduct,
 } from '../controller/product.controller.js'
 import {
   findOne,
@@ -20,6 +21,7 @@ admin.get('/users/search', searchUser)
 admin.get('/products/sellers', fetchSeller)
 admin.get('/users/:id', findOne)
 admin.patch('/products/:id/status', updateProductStatus)
+admin.delete('/products/:id', adminDeleteProduct)
 admin.delete('/users/:id', deleteUser)
 
 export default admin

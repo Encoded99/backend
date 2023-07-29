@@ -9,6 +9,7 @@ import {
   updateProductStatus,
   addProductReview,
   generateAndSendInvoice,
+  userDeleteProduct,
 } from '../controller/product.controller.js'
 import isLoggedIn from '../middleware/authentication.js'
 
@@ -21,5 +22,6 @@ pRouter.get('/:id', findProduct)
 pRouter.patch('/:id', isLoggedIn, updateProduct)
 pRouter.patch('/:id/status', isLoggedIn, updateProductStatus)
 pRouter.patch('/:id/add-review', isLoggedIn, addProductReview)
+pRouter.delete('/:id', isLoggedIn, userDeleteProduct)
 
 export default pRouter
