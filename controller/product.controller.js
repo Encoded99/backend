@@ -132,9 +132,12 @@ export async function updateProductStatus(req, res, next) {
     product.status = req.body.status
     product.status = req.body.available
 
-    const data = await Product.findByIdAndUpdate(product._id, product, {
-      new: true,
-    })
+    const data = await Product.findByIdAndUpdate(
+      { _id: product._id, ...product },
+      {
+        new: true,
+      }
+    )
 
     Msg(res, { product: data })
   } catch (err) {
