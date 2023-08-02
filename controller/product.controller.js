@@ -132,7 +132,7 @@ export async function updateProductStatus(req, res, next) {
     product.status = req.body.status
     product.available = req.body.available
 
-    const data = await Product.findByIdAndUpdate(roduct._id, product, {
+    const data = await Product.findByIdAndUpdate(product._id, product, {
       new: true,
     })
 
