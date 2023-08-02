@@ -10,8 +10,8 @@ export const registerValidation = (data) => {
     email: Joi.string().required().email(),
     password: Joi.string().min(8).max(1024).required(),
     address: Joi.object({
-      houseNumber: Joi.string().required(),
-      street: Joi.string().required(),
+      houseNumber: Joi.string().optional(),
+      street: Joi.string().option(),
       city: Joi.string().required(),
       state: Joi.string().required(),
       country: Joi.string().required(),
