@@ -3,7 +3,7 @@ import { config } from 'dotenv'
 import cors from 'cors'
 import helmet from 'helmet'
 import Router from './routes/index.js'
-import initDb from './database/config.js'
+import Conn from './database/config.js'
 
 config()
 const app = express()
@@ -30,5 +30,13 @@ app.use((err, req, res, next) => {
 })
 
 const PORT = process.env.PORT || 8080
-const db = initDb(app, PORT)
-export default db
+const initDb = () => {
+  Conn.then(() => {
+    console.log('Connection to Database successful')
+    app.listen(PORT, () => {
+      console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`)
+    })
+  })
+}
+
+initDb()

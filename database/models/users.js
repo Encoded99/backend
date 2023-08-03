@@ -16,11 +16,6 @@ const Schema = new mongoose.Schema({
     unique: true,
     lower: true,
   },
-  password: {
-    type: String,
-    required: [true, 'Password is required'],
-    // select: false,
-  },
   address: {
     houseNumber: { type: String },
     street: { type: String },

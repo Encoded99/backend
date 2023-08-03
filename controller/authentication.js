@@ -1,6 +1,8 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import User from '../database/models/users.js'
+import Auth from '../database/models/auth.js'
+import Conn from '../database/config.js'
 import Exception from '../utils/exception.js'
 import {
   registerValidation,
@@ -13,7 +15,10 @@ import generateString from '../utils/randString.js'
 import { getCache, setCache } from '../utils/redisCache.js'
 
 export async function signUpEmailPassword(req, res, next) {
+  const conn = await Conn
+  const session = await conn.startSession()
   try {
+    session.startTransaction()
     const data = req.body
     const { error } = registerValidation(data)
     if (error) throw new Exception(error.details[0].message, 400)
@@ -21,21 +26,30 @@ export async function signUpEmailPassword(req, res, next) {
       $or: [{ email: data.email }, { telephone: data.telephone }],
     })
     if (isEmailExist) throw new Exception('user exist', 400)
-    data.password = await bcrypt.hash(data.password, 10)
-    const account = await User.create(data)
+
+    // const password = data.password = await bcrypt.hash(data.password, 10)
+    const { password } = data
+    delete data.password
+    const account = await User.create([{ ...data }], { session })
+    await Auth.create([{ user: account[0]._id, secret: password }], {
+      session,
+    })
+
+    await session.commitTransaction()
 
     account.accessToken = jwt.sign(
-      { _id: account._id, email: account.email, role: account.role },
+      { _id: account[0]._id, email: account[0].email, role: account[0].role },
       process.env.JWT_SECRET,
       {
         expiresIn: '24hrs',
       }
     )
-    account.password = null
-    Msg(res, { user: account }, 'registered', 201)
+    Msg(res, { user: account[0] }, 'registered', 201)
   } catch (error) {
+    await session.abortTransaction()
     next(new Exception(error.message, error.status))
   }
+  session.endSession()
 }
 
 export async function completeSignup(req, res, next) {
@@ -110,12 +124,13 @@ export async function Login(req, res, next) {
     if (error) return res.status(400).json({ error: error.details[0].message })
     const { email, password } = req.body
     const user = await User.findOne({ email })
-
     if (!user) throw new Exception('Invalid email/password ', 401)
+    const auth = await Auth.findOne({ user: user._id })
 
-    const validPassword = await bcrypt.compare(password, user.password)
+    if (!auth) throw new Exception('Invalid password/password ', 401)
+    const validPassword = await bcrypt.compare(password, auth.secret)
     if (!validPassword) throw new Exception('Invalid email/password ', 401)
-    user.password = null
+
     user.accessToken = jwt.sign(
       { _id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
@@ -135,7 +150,6 @@ export async function myAccout(req, res, next) {
     const userId = req.user._id
     const user = await User.findOne({ _id: userId })
     if (!user) throw new Exception('user  not found ', 400)
-    user.password = null
 
     Msg(res, { data: user })
   } catch (err) {
@@ -148,7 +162,6 @@ export async function findOne(req, res, next) {
     const { id } = req.params
     const user = await User.findOne({ _id: id })
     if (!user) throw new Exception('user  not found ', 400)
-    user.password = null
 
     Msg(res, { user })
   } catch (err) {
@@ -177,7 +190,6 @@ export async function updateUser(req, res, next) {
       new: true,
     })
 
-    data.password = null
     Msg(res, { user: data })
   } catch (err) {
     next(new Exception(err.message, err.status))
@@ -201,10 +213,49 @@ export async function searchUser(req, res, next) {
       $or: [{ email }, { telephone }],
     })
     if (!user) throw new Exception('user  not found ', 400)
-    user.password = null
 
     Msg(res, { user })
   } catch (err) {
     next(new Exception(err.message, err.status))
   }
 }
+
+// export async function copyPassToAuth(req, res, next) {
+//   try {
+//     const users = await User.find().select('password')
+//     console.log(users, 'all users')
+//     const data = users.map((item) => {
+//       let payload
+//       if (item.password != null) {
+//         payload = {
+//           user: item._id,
+//           secret: item.password,
+//         }
+//       }
+//       return payload
+//     })
+//     const a = await Auth.create(data)
+
+//     Msg(res, a)
+//   } catch (err) {
+//     next(new Exception(err.message, err.status))
+//   }
+// }
+
+// export async function deletePasswordFromUserModel(req, res, next) {
+//   try {
+//     const a = await User.updateMany(
+//       {},
+//       {
+//         $unset: { password: 1 },
+//       },
+//       {
+//         multi: true,
+//       }
+//     )
+
+//     Msg(res, a)
+//   } catch (err) {
+//     next(new Exception(err.message, err.status))
+//   }
+// }
