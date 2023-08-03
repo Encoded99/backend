@@ -53,7 +53,10 @@ export async function signUpEmailPassword(req, res, next) {
 }
 
 export async function completeSignup(req, res, next) {
+  const conn = await Conn
+  const session = await conn.startSession()
   try {
+    session.startTransaction()
     const data = req.body
     const { token } = req.query
 
@@ -67,20 +70,29 @@ export async function completeSignup(req, res, next) {
       $or: [{ email: data.email }, { telephone: data.telephone }],
     })
     if (isEmailExist) throw new Exception('user exist', 400)
-    data.password = await bcrypt.hash(data.password, 10)
-    const account = await User.create(data)
-    delete account.password
+    const { password } = data
+    delete data.password
+    const account = await User.create([{ ...data }], { session })
+    await Auth.create([{ user: account[0]._id, secret: password }], {
+      session,
+    })
+
+    await session.commitTransaction()
+
     account.accessToken = jwt.sign(
-      { _id: account._id, email: account.email, role: account.role },
+      { _id: account[0]._id, email: account[0].email, role: account[0].role },
       process.env.JWT_SECRET,
       {
         expiresIn: '24hrs',
       }
     )
-    Msg(res, { user: account }, 'registered', 201)
+
+    Msg(res, { user: account[0] }, 'registered', 201)
   } catch (error) {
+    await session.abortTransaction()
     next(new Exception(error.message, error.status))
   }
+  session.endSession()
 }
 
 export async function signUpMagicLink(req, res, next) {
