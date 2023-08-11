@@ -17,6 +17,10 @@ const Schema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    initialSecret: {
+      type: Boolean,
+      required: false,
+    },
   },
   { timestamps: true }
 )
