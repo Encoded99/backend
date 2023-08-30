@@ -132,6 +132,13 @@ export async function signUpMagicLink(req, res, next) {
 
 export async function Login(req, res, next) {
   try {
+    /* To implement later
+    1. Get the user's ip address from request.
+    2. Get the region where the user is browsing from using https://ipwho.is/41.217.100.157 or  https://ipwhois.app/json/41.217.100.157
+    3. save the data somewhere where you can reference to return products from that region to the user when he/she uses the findAll products endpoint
+
+    */
+
     const { error } = LoginValidation(req.body)
     if (error) return res.status(400).json({ error: error.details[0].message })
     const { email, password } = req.body
