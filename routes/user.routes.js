@@ -15,7 +15,9 @@ userRouter.post('/', signUpEmailPassword)
 userRouter.post('/signup-link', signUpMagicLink)
 userRouter.post('/complete-signup', completeSignup)
 userRouter.post('/login', Login)
-userRouter.get('/my-profile', isLoggedIn, myAccout)
-userRouter.patch('/update-profile', isLoggedIn, updateUser)
+
+userRouter.use(isLoggedIn)
+userRouter.get('/my-profile', myAccout)
+userRouter.patch('/update-profile', updateUser)
 
 export default userRouter

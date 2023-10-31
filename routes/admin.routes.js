@@ -25,3 +25,8 @@ admin.delete('/products/:id', adminDeleteProduct)
 admin.delete('/users/:id', deleteUser)
 
 export default admin
+
+// ✅ Instead, do this
+const tryCatchFn = (fn) => (req, res, next) => {
+  fn(req, res, next).catch(next)
+}

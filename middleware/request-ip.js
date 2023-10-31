@@ -16,3 +16,4 @@ const RequestIp = async (req, res, next) => {
 }
 
 export default RequestIp
+//axios.get(https://api.ipregistry.co/?key=z2ur27t3ytvk8erh)

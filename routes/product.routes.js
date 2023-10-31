@@ -19,9 +19,11 @@ pRouter.get('/verified', fetchVerifiedProducts)
 pRouter.get('/search', searchProducts)
 pRouter.get('/invoice', generateAndSendInvoice)
 pRouter.get('/:id', findProduct)
-pRouter.patch('/:id', isLoggedIn, updateProduct)
-pRouter.patch('/:id/status', isLoggedIn, updateProductStatus)
-pRouter.patch('/:id/add-review', isLoggedIn, addProductReview)
-pRouter.delete('/:id', isLoggedIn, userDeleteProduct)
+
+pRouter.use(isLoggedIn)
+pRouter.patch('/:id', updateProduct)
+pRouter.patch('/:id/status', updateProductStatus)
+pRouter.patch('/:id/add-review', addProductReview)
+pRouter.delete('/:id', userDeleteProduct)
 
 export default pRouter
